@@ -72,13 +72,15 @@ io.on("connection", (socket) => {
     socket.emit("test", "Connected!");
 });
 
-const basePath = '';
+const basePath = process.env.BASE_PATH;
 
 // Auth
 app.use(
-    `${basePath}/api/data`,
+    `${basePath}/data`,
     require("./src/pages/dashboard/index")
 );
+
+
 
 app.use((req, res) => {
     const output = { status: false, message: "Router not found" };
