@@ -80,10 +80,13 @@ app.use(
     require("./src/pages/dashboard/index")
 );
 
+app.get('/test', (req, res) => {
+    res.send({ status: true, message: "API data route working!" });
+});
 
 
 app.use((req, res) => {
-    const output = { status: false, message: "Router not found" };
+    const output = { status: false, message: `Router not found ${req.method} ${req.path}` };
     res.status(200).send(output);
 });
 
