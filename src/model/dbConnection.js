@@ -1,7 +1,6 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
 const db = mysql.createPool({
-
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -9,10 +8,6 @@ const db = mysql.createPool({
   port: process.env.DB_PORT,
   connectTimeout: 40000,
   acquireTimeout: 40000,
-  // connectionLimit: 1000,
-  // connectTimeout: 60 * 60 * 1000,
-  // acquireTimeout: 60 * 60 * 1000,
-  // timeout: 60 * 60 * 1000,
 });
 
-exports.db = db;
+module.exports = db;
