@@ -33,7 +33,6 @@ router.get("/", upload.none(), async (req, res) => {
 
     } catch (err) {
         console.error("Error fetching temperature data:", err);
-        socket.emit("timezone_data", { status: false, message: "Server error" });
     }
 
     // cron.schedule('*/5 * * * * *', () => {
