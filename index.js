@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
             try {
                 const insertQuery = "INSERT INTO temperature (value, created_at) VALUES (?, STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%sZ'))";
                 await new Promise((resolve, reject) => {
-                    db.query(insertQuery, [99, mockData.utcDateString], (err, result) => {
+                    db.query(insertQuery, [mockData.randomNumber, mockData.utcDateString], (err, result) => {
                         if (err) reject(err);
                         else resolve(result);
                     });
