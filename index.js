@@ -4,7 +4,7 @@ const app = express();
 const { db } = require("./src/model/dbConnection");
 const cron = require('node-cron');
 const { generateUtcDateStringWithRandomNumber } = require('./src/function');
-const io = require("socket.io")(8081, {
+const io = require("socket.io")(3002, {
     cors: {
         origin: "http://localhost:3000",
         methods: ["GET", "POST"],
@@ -80,7 +80,7 @@ app.use(
     require("./src/pages/dashboard/index")
 );
 
-app.get(`/test`, (req, res) => {
+app.get(`${basePath}/test`, (req, res) => {
     res.send({ status: true, message: "API data route working!" });
 });
 
@@ -90,7 +90,7 @@ app.use((req, res) => {
     res.status(200).send(output);
 });
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
 const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
