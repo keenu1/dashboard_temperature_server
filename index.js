@@ -4,9 +4,17 @@ const app = express();
 const { db } = require("./src/model/dbConnection");
 const cron = require('node-cron');
 const { generateUtcDateStringWithRandomNumber } = require('./src/function');
-const io = require("socket.io")(3002, {
+
+const PORT = process.env.PORT;
+const PORT2 = process.env.PORT2;
+// Create the server instance
+const server = app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+const io = require("socket.io")(PORT2, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "*",
         methods: ["GET", "POST"],
     }
 });
@@ -90,10 +98,8 @@ app.use((req, res) => {
     res.status(200).send(output);
 });
 
-const PORT = process.env.PORT;
-const server = app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+
+
 
 // Export the app for testing
 module.exports = app; // Export the app instance for testing
