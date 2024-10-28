@@ -72,7 +72,7 @@ io.on("connection", (socket) => {
     socket.emit("test", "Connected!");
 });
 
-const basePath = process.env.BASE_URL;
+const basePath = '';
 
 // Auth
 app.use(
