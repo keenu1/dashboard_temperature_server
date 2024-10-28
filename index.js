@@ -80,7 +80,7 @@ app.use(
     require("./src/pages/dashboard/index")
 );
 
-app.get('/test', (req, res) => {
+app.get(`${basePath}/test`, (req, res) => {
     res.send({ status: true, message: "API data route working!" });
 });
 
