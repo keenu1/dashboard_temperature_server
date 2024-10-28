@@ -4,7 +4,7 @@ const app = express();
 const { db } = require("./src/model/dbConnection");
 const cron = require('node-cron');
 const { generateUtcDateStringWithRandomNumber } = require('./src/function');
-const io = require("socket.io")(3002, {
+const io = require("socket.io")(8081, {
     cors: {
         origin: "http://localhost:3000",
         methods: ["GET", "POST"],
