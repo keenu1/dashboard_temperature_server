@@ -1,17 +1,19 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const { db } = require("./src/model/dbConnection");
+const db = require("./src/model/dbConnection"); // Import the pool directly
 const cron = require('node-cron');
 const { generateUtcDateStringWithRandomNumber } = require('./src/function');
 
 const PORT = process.env.PORT;
 const PORT2 = process.env.PORT2;
+
 // Create the server instance
 const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
+// Socket.IO setup
 const io = require("socket.io")(PORT2, {
     cors: {
         origin: "*",
@@ -19,6 +21,7 @@ const io = require("socket.io")(PORT2, {
     }
 });
 
+// Middleware for cache control
 app.use((req, res, next) => {
     res.set("Cache-Control", "no-store");
     res.setHeader("Surrogate-Control", "no-store");
@@ -28,6 +31,7 @@ app.use((req, res, next) => {
     next();
 });
 
+// Socket connection handling
 io.on("connection", (socket) => {
     console.log('connected!');
 
@@ -35,27 +39,16 @@ io.on("connection", (socket) => {
 
     socket.on("getTemperatureData", () => {
         const fetchTemperatureData = async () => {
-            const currentDate = new Date();
             const mockData = generateUtcDateStringWithRandomNumber();
 
             try {
                 const insertQuery = "INSERT INTO temperature (value, created_at) VALUES (?, STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%sZ'))";
-                await new Promise((resolve, reject) => {
-                    db.query(insertQuery, [mockData.randomNumber, mockData.utcDateString], (err, result) => {
-                        if (err) reject(err);
-                        else resolve(result);
-                    });
-                });
+                await db.query(insertQuery, [mockData.randomNumber, mockData.utcDateString]);
 
-                const selectQuery = `SELECT  value, created_at FROM (
-                    SELECT id,value, DATE_FORMAT(created_at, '%Y-%m-%dT%H:%i:%sZ') AS created_at  FROM temperature ORDER BY id DESC LIMIT 10
+                const selectQuery = `SELECT value, created_at FROM (
+                    SELECT id, value, DATE_FORMAT(created_at, '%Y-%m-%dT%H:%i:%sZ') AS created_at  FROM temperature ORDER BY id DESC LIMIT 10
                 ) AS last_five ORDER BY id ASC;`;
-                const result = await new Promise((resolve, reject) => {
-                    db.query(selectQuery, [], (err, result) => {
-                        if (err) reject(err);
-                        else resolve(result);
-                    });
-                });
+                const [result] = await db.query(selectQuery);
 
                 socket.emit("timezone_data", { status: true, data: result });
             } catch (err) {
@@ -70,7 +63,6 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         console.log('disconnected');
-        // Stop the cron job when the user disconnects
         if (temperatureCronJob) {
             temperatureCronJob.stop();
             console.log("Cron job stopped due to disconnection.");
@@ -82,24 +74,18 @@ io.on("connection", (socket) => {
 
 const basePath = process.env.BASE_PATH;
 
-// Auth
-app.use(
-    `${basePath}/data`,
-    require("./src/pages/dashboard/index")
-);
+// Auth route for the dashboard
+app.use(`${basePath}/data`, require("./src/pages/dashboard/index")(db)); // Pass the db connection
 
 app.get(`${basePath}/test`, (req, res) => {
     res.send({ status: true, message: "API data route working!" });
 });
 
-
+// Handle 404 responses
 app.use((req, res) => {
     const output = { status: false, message: `Router not found ${req.method} ${req.path}` };
     res.status(200).send(output);
 });
 
-
-
-
 // Export the app for testing
-module.exports = app; // Export the app instance for testing
+module.exports = app;
