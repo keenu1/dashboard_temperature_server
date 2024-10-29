@@ -4,7 +4,7 @@ const { db } = require("../../model/dbConnection"); // Assuming you have a separ
 const multer = require("multer");
 var cron = require('node-cron');
 const upload = multer();
-
+console.log(db);
 
 
 
