@@ -2,6 +2,7 @@
 // function.test.js
 const { generateUtcDateStringWithRandomNumber } = require('../function');
 
+//cek the generatefunction date utc and random number
 describe('generateUtcDateStringWithRandomNumber', () => {
     it('should return the correct UTC date string and a random number', () => {
         const mockDate = new Date('2024-10-27T12:00:00Z');

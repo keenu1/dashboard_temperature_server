@@ -11,6 +11,7 @@ jest.mock('../model/dbConnection', () => {
     };
 });
 
+
 const mockData = [
     { value: 25, created_at: '2024-10-28T12:00:00Z' },
     { value: 30, created_at: '2024-10-28T12:05:00Z' },
@@ -22,6 +23,7 @@ describe('GET /api/data', () => {
         db.query.mockClear();
     });
 
+    //get the same data that has created at atribut
     it('should retrieve temperature data with created_at in UTC format', async () => {
         db.query.mockImplementation((query, values, callback) => {
             callback(null, mockData);

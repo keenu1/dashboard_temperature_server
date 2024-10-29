@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const db = require("./src/model/dbConnection"); // Import the pool directly
+const db = require("./src/model/dbConnection");
 const cron = require('node-cron');
 const { generateUtcDateStringWithRandomNumber } = require('./src/function');
 const http = require('http');
@@ -9,7 +9,7 @@ const http = require('http');
 const PORT = process.env.PORT;
 const PORT2 = process.env.PORT2;
 
-// Create the server instance using the HTTP module
+// Create the server instance using the HTTP module so can has same port
 const server = http.createServer(app);
 
 // Socket.IO setup
@@ -32,14 +32,15 @@ app.use((req, res, next) => {
 
 // Socket connection handling
 io.on("connection", (socket) => {
-    console.log('connected!');
-
+    //check if connected
+    // console.log('connected!');
     let temperatureCronJob;
 
+    //when client emit the getTemperatureData
     socket.on("getTemperatureData", () => {
         const fetchTemperatureData = async () => {
             const mockData = generateUtcDateStringWithRandomNumber();
-
+            //insert and select the 5 data from database
             try {
                 const insertQuery = "INSERT INTO temperature (value, created_at) VALUES (?,?)";
                 await db.query(insertQuery, [mockData.randomNumber, mockData.utcDateString]);
@@ -60,8 +61,10 @@ io.on("connection", (socket) => {
         temperatureCronJob = cron.schedule('*/5 * * * * *', fetchTemperatureData);
     });
 
+    //when socket disconnect stop cron
     socket.on("disconnect", () => {
-        console.log('disconnected');
+        //check if discconnected
+        // console.log('disconnected');
         if (temperatureCronJob) {
             temperatureCronJob.stop();
             console.log("Cron job stopped due to disconnection.");
@@ -76,6 +79,7 @@ const basePath = process.env.BASE_PATH;
 // Auth route for the dashboard
 app.use(`${basePath}/data`, require("./src/pages/dashboard/index")(db)); // Pass the db connection
 
+//check routing
 app.get(`${basePath}/test`, (req, res) => {
     res.send({ status: true, message: "API data route working!" });
 });
