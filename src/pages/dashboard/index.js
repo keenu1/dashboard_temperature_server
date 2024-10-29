@@ -7,29 +7,28 @@ const upload = multer();
 console.log(db);
 
 
-
 router.get("/", upload.none(), async (req, res) => {
     try {
-        const selectQuery = `SELECT  value, created_at FROM (
-            SELECT id, value, DATE_FORMAT(created_at, '%Y-%m-%dT%H:%i:%sZ') AS created_at  FROM temperature ORDER BY id DESC LIMIT 10
-        ) AS last_five ORDER BY id ASC;`;
-        const result = await new Promise((resolve, reject) => {
-            db.query(selectQuery, [], (err, result) => {
-                if (err) reject(err);
-                else resolve(result);
-            });
-        });
+        // Manually get a connection from the pool
+        const connection = await db.getConnection();
 
-        res.status(200).send({ status: true, data: result });
+        try {
+            const selectQuery = `SELECT value, created_at FROM (
+                SELECT id, value, DATE_FORMAT(created_at, '%Y-%m-%dT%H:%i:%sZ') AS created_at FROM temperature ORDER BY id DESC LIMIT 10
+            ) AS last_five ORDER BY id ASC;`;
 
+            const [result] = await connection.query(selectQuery);
+            res.status(200).send({ status: true, data: result });
+        } finally {
+            // Release the connection back to the pool
+            connection.release();
+        }
     } catch (err) {
         console.error("Error fetching temperature data:", err);
+        res.status(500).send({ status: false, error: "Database query failed." });
     }
-
-
-
-
-
 });
+
+
 
 module.exports = router;
