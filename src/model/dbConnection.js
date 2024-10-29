@@ -10,4 +10,18 @@ const db = mysql.createPool({
   acquireTimeout: 40000,
 });
 
+// Function to check the database connection
+async function checkConnection() {
+  try {
+    const connection = await db.getConnection(); // Get a connection from the pool
+    await connection.query("SELECT 1"); // Simple query to check the connection
+    console.log("Database connection successful!");
+    connection.release(); // Release the connection back to the pool
+  } catch (error) {
+    console.error("Database connection failed:", error);
+  }
+}
+
+checkConnection();
+
 module.exports = db;
