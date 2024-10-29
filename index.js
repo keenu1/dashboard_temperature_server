@@ -85,6 +85,11 @@ app.get(`${basePath}/test`, (req, res) => {
     res.send({ status: true, message: "API data route working!" });
 });
 
+// Start listening for incoming connections
+server.listen(PORT2, () => {
+    console.log(`Socket.IO server running on port ${PORT2}`);
+});
+
 // Handle 404 responses
 app.use((req, res) => {
     const output = { status: false, message: `Router not found ${req.method} ${req.path}` };
