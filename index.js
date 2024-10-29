@@ -14,7 +14,7 @@ const server = app.listen(PORT, () => {
 });
 
 // Socket.IO setup
-const io = require("socket.io")(PORT, {
+const io = require("socket.io")(PORT2, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
