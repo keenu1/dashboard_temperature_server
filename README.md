@@ -27,6 +27,14 @@ npm test #testing
 
 ```
 
+## Server
+
+APP
+https://dashboard-temperature.vercel.app/
+
+Server
+https://dashboardtemperatureserver-production.up.railway.app/
+
 ## chalanges that i face during the assigment
 
 1. At first, I struggled due to my workload at my current company, so I started working on the project during off-hours on Saturday mornings around 4 or 5 a.m.
