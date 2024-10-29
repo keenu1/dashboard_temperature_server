@@ -13,7 +13,7 @@ const PORT2 = process.env.PORT2;
 const server = http.createServer(app);
 
 // Socket.IO setup
-const io = require("socket.io")(PORT, {
+const io = require("socket.io")(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
