@@ -14,8 +14,8 @@ router.get("/", upload.none(), async (req, res) => {
 
         try {
             const selectQuery = `SELECT value, created_at FROM (
-                SELECT id, value, DATE_FORMAT(created_at, '%Y-%m-%dT%H:%i:%sZ') AS created_at FROM temperature ORDER BY id DESC LIMIT 10
-            ) AS last_five ORDER BY id ASC;`;
+                SELECT id, value, created_at FROM temperature ORDER BY id DESC LIMIT 10
+            ) AS last_five ORDER BY id ASC`;
 
             const [result] = await connection.query(selectQuery);
             res.status(200).send({ status: true, data: result });
