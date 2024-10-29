@@ -40,7 +40,7 @@ io.on("connection", (socket) => {
     socket.on("getTemperatureData", () => {
         const fetchTemperatureData = async () => {
             const mockData = generateUtcDateStringWithRandomNumber();
-            //insert and select the 5 data from database
+            //insert and select the 10 data from database
             try {
                 const insertQuery = "INSERT INTO temperature (value, created_at) VALUES (?,?)";
                 await db.query(insertQuery, [mockData.randomNumber, mockData.utcDateString]);
