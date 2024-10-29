@@ -13,7 +13,7 @@ const PORT2 = process.env.PORT2;
 const server = http.createServer(app);
 
 // Socket.IO setup
-const io = require("socket.io")(server, {
+const io = require("socket.io")(PORT, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
@@ -83,9 +83,6 @@ app.get(`${basePath}/test`, (req, res) => {
 // Start listening for incoming connections on the same server instance
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-});
-server.listen(PORT2, () => {
-    console.log(`Socket.IO server running on port ${PORT2}`);
 });
 
 // Handle 404 responses
