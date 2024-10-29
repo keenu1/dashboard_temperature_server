@@ -5,16 +5,7 @@ const multer = require("multer");
 var cron = require('node-cron');
 const upload = multer();
 
-// const io = require("socket.io")(3002, {
-//     cors: {
-//         origin: "http://localhost:3000", // adjust this if your frontend is on another port
-//         methods: ["GET", "POST"],
-//     }
-// });
-// io.on("connection", (socket) => {
-//     console.log("Connected");
-//     socket.emit("test", "Connected!");
-// });
+
 
 
 router.get("/", upload.none(), async (req, res) => {
@@ -35,10 +26,7 @@ router.get("/", upload.none(), async (req, res) => {
         console.error("Error fetching temperature data:", err);
     }
 
-    // cron.schedule('*/5 * * * * *', () => {
-    //     console.log('running a task every 5 seconds');
-    //     io.emit("update", "Message from server every 5 seconds");
-    // });
+
 
 
 
