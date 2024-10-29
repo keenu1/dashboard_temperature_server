@@ -4,17 +4,16 @@ const app = express();
 const db = require("./src/model/dbConnection"); // Import the pool directly
 const cron = require('node-cron');
 const { generateUtcDateStringWithRandomNumber } = require('./src/function');
+const http = require('http');
 
 const PORT = process.env.PORT;
 const PORT2 = process.env.PORT2;
 
-// Create the server instance
-const server = app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// Create the server instance using the HTTP module
+const server = http.createServer(app);
 
 // Socket.IO setup
-const io = require("socket.io")(PORT2, {
+const io = require("socket.io")(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
@@ -42,13 +41,9 @@ io.on("connection", (socket) => {
             const mockData = generateUtcDateStringWithRandomNumber();
 
             try {
-                // const insertQuery = "INSERT INTO temperature (value, created_at) VALUES (?, STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%sZ'))";
                 const insertQuery = "INSERT INTO temperature (value, created_at) VALUES (?,?)";
                 await db.query(insertQuery, [mockData.randomNumber, mockData.utcDateString]);
 
-                // const selectQuery = `SELECT value, created_at FROM (
-                //     SELECT id, value, DATE_FORMAT(created_at, '%Y-%m-%dT%H:%i:%sZ') AS created_at  FROM temperature ORDER BY id DESC LIMIT 10
-                // ) AS last_five ORDER BY id ASC;`;
                 const selectQuery = `SELECT value, created_at FROM (
                     SELECT id, value, created_at  FROM temperature ORDER BY id DESC LIMIT 10
                 ) AS last_five ORDER BY id ASC;`;
@@ -85,7 +80,10 @@ app.get(`${basePath}/test`, (req, res) => {
     res.send({ status: true, message: "API data route working!" });
 });
 
-// Start listening for incoming connections
+// Start listening for incoming connections on the same server instance
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 server.listen(PORT2, () => {
     console.log(`Socket.IO server running on port ${PORT2}`);
 });
