@@ -42,11 +42,15 @@ io.on("connection", (socket) => {
             const mockData = generateUtcDateStringWithRandomNumber();
 
             try {
-                const insertQuery = "INSERT INTO temperature (value, created_at) VALUES (?, STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%sZ'))";
+                // const insertQuery = "INSERT INTO temperature (value, created_at) VALUES (?, STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%sZ'))";
+                const insertQuery = "INSERT INTO temperature (value, created_at) VALUES (?,?)";
                 await db.query(insertQuery, [mockData.randomNumber, mockData.utcDateString]);
 
+                // const selectQuery = `SELECT value, created_at FROM (
+                //     SELECT id, value, DATE_FORMAT(created_at, '%Y-%m-%dT%H:%i:%sZ') AS created_at  FROM temperature ORDER BY id DESC LIMIT 10
+                // ) AS last_five ORDER BY id ASC;`;
                 const selectQuery = `SELECT value, created_at FROM (
-                    SELECT id, value, DATE_FORMAT(created_at, '%Y-%m-%dT%H:%i:%sZ') AS created_at  FROM temperature ORDER BY id DESC LIMIT 10
+                    SELECT id, value, created_at  FROM temperature ORDER BY id DESC LIMIT 10
                 ) AS last_five ORDER BY id ASC;`;
                 const [result] = await db.query(selectQuery);
 
