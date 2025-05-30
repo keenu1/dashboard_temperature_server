@@ -7,7 +7,6 @@ const { generateUtcDateStringWithRandomNumber } = require('./src/function');
 const http = require('http');
 
 const PORT = process.env.PORT;
-const PORT2 = process.env.PORT2;
 
 // Create the server instance using the HTTP module so can has same port
 const server = http.createServer(app);
